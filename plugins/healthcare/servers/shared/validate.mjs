@@ -29,15 +29,17 @@ const TYPE = {
 export function check(schema, v, path = "") {
   if (Array.isArray(schema.anyOf)) {
     const errs = [];
+    let matched = false;
     for (const sub of schema.anyOf) {
       try {
         check(sub, v, path);
-        return;
+        matched = true;
+        break;
       } catch (e) {
         errs.push(e.message);
       }
     }
-    fail(path, `matches none of the allowed forms (${errs.join(" | ")})`);
+    if (!matched) fail(path, `matches none of the allowed forms (${errs.join(" | ")})`);
   }
   const types =
     schema.type === undefined ? [] : Array.isArray(schema.type) ? schema.type : [schema.type];
