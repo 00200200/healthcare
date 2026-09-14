@@ -13,6 +13,14 @@ function die(m: string): never {
   process.exit(1);
 }
 
+function readConcurrency(raw: string | undefined): number {
+  const value = Number(raw ?? 8);
+  if (!Number.isInteger(value) || value < 1) {
+    die("NE_CONCURRENCY must be a positive integer");
+  }
+  return value;
+}
+
 function listNotes(p: string): string[] {
   const st = statSync(p);
   if (st.isFile()) return [p];
@@ -62,7 +70,7 @@ async function main() {
   const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
   const files = listNotes(notesPath);
   const model = process.env.NE_MODEL ?? "sonnet";
-  const conc = Number(process.env.NE_CONCURRENCY ?? 8);
+  const conc = readConcurrency(process.env.NE_CONCURRENCY);
   console.error(`${files.length} notes, model=${model}, concurrency=${conc} → ${outPath}`);
   const out = createWriteStream(outPath);
   let i = 0;
