@@ -45,8 +45,11 @@ export function check(schema, v, path = "") {
   if (Array.isArray(schema.enum) && !schema.enum.includes(v))
     fail(path, `must be one of: ${schema.enum.join(", ")}`);
   if (typeof v === "string") {
-    if (typeof schema.minLength === "number" && v.length < schema.minLength)
+    const length = [...v].length;
+    if (typeof schema.minLength === "number" && length < schema.minLength)
       fail(path, `must be at least ${schema.minLength} character(s)`);
+    if (typeof schema.maxLength === "number" && length > schema.maxLength)
+      fail(path, `must be at most ${schema.maxLength} character(s)`);
     if (typeof schema.pattern === "string" && !new RegExp(schema.pattern).test(v))
       fail(path, `does not match required pattern ${schema.pattern}`);
   }
