@@ -18,7 +18,8 @@ function listNotes(p: string): string[] {
   if (st.isFile()) return [p];
   return readdirSync(p)
     .filter((f) => /\.(txt|md)$/i.test(f))
-    .map((f) => join(p, f));
+    .map((f) => join(p, f))
+    .filter((f) => statSync(f).isFile());
 }
 
 function runOne(id: string, text: string, schema: object, model: string): Promise<object> {
