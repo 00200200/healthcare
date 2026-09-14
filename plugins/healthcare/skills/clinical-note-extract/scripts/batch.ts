@@ -35,9 +35,13 @@ function runOne(id: string, text: string, schema: object, model: string): Promis
     ]);
     let out = "";
     let err = "";
-    p.stdout.on("data", (d) => (out += d));
-    p.stderr.on("data", (d) => (err += d));
+    const outDecoder = new TextDecoder();
+    const errDecoder = new TextDecoder();
+    p.stdout.on("data", (d) => (out += outDecoder.decode(d, { stream: true })));
+    p.stderr.on("data", (d) => (err += errDecoder.decode(d, { stream: true })));
     p.on("close", (code) => {
+      out += outDecoder.decode();
+      err += errDecoder.decode();
       const m = out.match(/\{[\s\S]*\}/);
       let record: unknown = null;
       try {
