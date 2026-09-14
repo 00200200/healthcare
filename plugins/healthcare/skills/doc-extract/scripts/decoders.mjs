@@ -187,6 +187,11 @@ export function decodeRtf(body) {
         i += 2;
         continue;
       }
+      if (esc === "_") {
+        if (skipDepth === 0) out += "\u2011";
+        i += 2;
+        continue;
+      }
       RTF_WORD.lastIndex = i;
       const word = RTF_WORD.exec(body);
       if (word) {
