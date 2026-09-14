@@ -35,8 +35,11 @@ function runOne(id: string, text: string, schema: object, model: string): Promis
     ]);
     let out = "";
     let err = "";
+    let processError: Error | undefined;
     p.stdout.on("data", (d) => (out += d));
     p.stderr.on("data", (d) => (err += d));
+    p.on("error", (error) => (processError ??= error));
+    p.stdin.on("error", (error) => (processError ??= error));
     p.on("close", (code) => {
       const m = out.match(/\{[\s\S]*\}/);
       let record: unknown = null;
@@ -47,7 +50,7 @@ function runOne(id: string, text: string, schema: object, model: string): Promis
         id,
         ok: code === 0 && record !== null,
         record,
-        error: code !== 0 ? err || out : undefined,
+        error: code !== 0 ? processError?.message ?? (err || out) : undefined,
       });
     });
     p.stdin.write(user);
