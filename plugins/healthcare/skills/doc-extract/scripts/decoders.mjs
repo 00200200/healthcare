@@ -43,7 +43,7 @@ export function stripMarkup(body) {
         /<\/(td|th)>|<br\s*\/?>|<\/(?:p|div|li|tr|h[1-6]|paragraph|item|caption|content|title|thead|tbody)>/gi,
         (_, cell) => (cell ? "\t" : "\n"),
       )
-      .replace(/<[^>]+>/g, ""),
+      .replace(/<(?:[^>"']|"[^"]*"|'[^']*')+>/g, ""),
   )
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n");
