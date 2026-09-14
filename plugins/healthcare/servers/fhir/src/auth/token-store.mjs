@@ -33,11 +33,12 @@ class MemoryTokenStore {
   #m = new Map();
   /** @param {string} k */
   async get(k) {
-    return this.#m.get(k) ?? null;
+    const token = this.#m.get(k);
+    return token ? structuredClone(token) : null;
   }
   /** @param {string} k @param {StoredTokens} t */
   async set(k, t) {
-    this.#m.set(k, t);
+    this.#m.set(k, structuredClone(t));
   }
   /** @param {string} k */
   async delete(k) {
