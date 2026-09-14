@@ -217,14 +217,17 @@ function runClaude(promptText) {
     const p = spawn("claude", argv, { env });
     let out = "";
     let err = "";
+    let spawnFailed = false;
     p.stdout.on("data", (d) => (out += d));
     p.stderr.on("data", (d) => (err += d));
     p.on("error", (e) => {
+      spawnFailed = true;
       noteSpawnOutcome(true, e.message);
       resolve({ rows: [], error: `spawn claude failed: ${e.message}` });
     });
     p.stdin.on("error", () => {});
     p.on("close", (code) => {
+      if (spawnFailed) return;
       if (code !== 0) {
         noteSpawnOutcome(true, (err || out).slice(0, 120));
         return resolve({ rows: [], error: (err || out).slice(0, 200) });
