@@ -150,6 +150,7 @@ async function extractWithPdftotext(src) {
     return null;
   }
   const text = stdout
+    .replace(/\f+$/, "")
     .split("\f")
     .map((page, i) => pageMarker(i + 1, page))
     .join("");

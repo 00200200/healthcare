@@ -89,6 +89,7 @@ export function extractWithMethod(
   if (r.status !== 0) return null;
   return {
     text: r.stdout
+      .replace(/\f+$/, "")
       .split("\f")
       .map((page, i) => `\n\n=== [page ${i + 1}] ===\n\n${page}`)
       .join(""),
