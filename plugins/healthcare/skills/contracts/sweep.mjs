@@ -47,7 +47,13 @@ function num(name, v) {
   if (!Number.isFinite(n)) die(`--${name} must be a number, got ${JSON.stringify(v)}`);
   return n;
 }
-const CONC = num("concurrency", args.concurrency ?? 12);
+function positiveInteger(name, v) {
+  const n = num(name, v);
+  if (!Number.isInteger(n) || n < 1)
+    die(`--${name} must be a positive integer, got ${JSON.stringify(v)}`);
+  return n;
+}
+const CONC = positiveInteger("concurrency", args.concurrency ?? 12);
 const RUN = args.run;
 const BRIEF = num("brief", args.brief);
 const SCOPE = num("scope", args.scope);
