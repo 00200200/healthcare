@@ -143,9 +143,11 @@ export function decodeRtf(body) {
   let skipDepth = 0; // >0 while inside a dropped destination group
   let depth = 0;
   let ucSkip = 1; // \ucN: fallback chars to swallow after \uN
+  const ucStack = [];
   while (i < body.length) {
     const c = body[i];
     if (c === "{") {
+      ucStack.push(ucSkip);
       depth++;
       if (skipDepth === 0) {
         const peek = body.slice(i + 1, i + 24);
@@ -158,6 +160,7 @@ export function decodeRtf(body) {
     }
     if (c === "}") {
       if (skipDepth === depth) skipDepth = 0;
+      if (ucStack.length) ucSkip = ucStack.pop();
       if (depth > 0) depth--;
       i++;
       continue;
